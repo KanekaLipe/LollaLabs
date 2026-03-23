@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lolla Labs — Casting</title>
+<link rel="stylesheet" href="./Style.css">
+<link rel="manifest" href="./manifest.json">
+<link href="service-worker.js" rel="script">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const { createClient } = supabase;
+      window.supabaseClient = createClient(
+        "https://sxrvecrgmorzbncsweua.supabase.co",
+        "sb_publishable_hf0p10oi2SKXfmdKCNxsXg_cpja8BUP"
+      );
+    
+</script>
+
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-sq">L</div>
+  <span class="logo-name">Lolla Labs</span>
+  <span class="logo-sep">/</span>
+  <span class="logo-sub">Casting</span>
+</div>
+
+<div class="wrap">
+
+  <div class="steps" id="steps-bar">
+    <div class="step active" id="step-1">
+      <div class="step-dot">1</div>
+      <div class="step-label">Perfil</div>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step" id="step-2">
+      <div class="step-dot">2</div>
+      <div class="step-label">Medidas</div>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step" id="step-3">
+      <div class="step-dot">3</div>
+      <div class="step-label">Book</div>
+    </div>
+  </div>
+
+  <div class="panel active" id="panel-1">
+    <div class="card">
+      <div class="card-title">Dados pessoais</div>
+      <div class="card-sub">Informações básicas de contato</div>
+
+      <div class="field">
+        <label>Nome completo *</label>
+        <input type="text" id="nome" placeholder="Seu nome">
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>E-mail *</label>
+          <input type="email" id="email" placeholder="seu@email.com">
+        </div>
+        <div class="field">
+          <label>WhatsApp *</label>
+          <input type="tel" id="telefone" placeholder="(11) 99999-9999">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Cidade</label>
+          <input type="text" id="cidade" placeholder="São Paulo">
+        </div>
+        <div class="field">
+          <label>Data de nascimento</label>
+          <input type="date" id="nascimento">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Instagram</label>
+        <input type="text" id="instagram" placeholder="@seuusuario">
+      </div>
+
+      <div class="nav">
+        <span></span>
+        <button class="btn-next" onclick="goTo(2)">Próximo →</button>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="panel-2">
+    <div class="card">
+      <div class="card-title">Medidas</div>
+      <div class="card-sub">Para o perfil de casting</div>
+
+      <div class="row">
+        <div class="field">
+          <label>Altura (cm)</label>
+          <input type="number" id="altura" placeholder="175">
+        </div>
+        <div class="field">
+          <label>Manequim</label>
+          <input type="text" id="manequim" placeholder="P / 36">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Busto (cm)</label>
+          <input type="number" id="busto" placeholder="86">
+        </div>
+        <div class="field">
+          <label>Cintura (cm)</label>
+          <input type="number" id="cintura" placeholder="62">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Quadril (cm)</label>
+        <input type="number" id="quadril" placeholder="89">
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(1)">← Voltar</button>
+        <button class="btn-next" onclick="goTo(3)">Próximo →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-3">
+    <div class="card">
+      <div class="card-title">Book fotográfico</div>
+      <div class="card-sub">Envie até 10 fotos · JPG ou PNG · máx. 10 MB cada</div>
+
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="book-input" accept="image/jpeg,image/png,image/webp" multiple onchange="handleFiles(this.files)">
+        <div class="upload-icon">📷</div>
+        <div class="upload-title">Arraste ou clique para enviar</div>
+        <div class="upload-hint">Selecione as melhores fotos do seu book</div>
+      </div>
+
+      <div class="file-count" id="file-count" style="display:none"></div>
+      <div class="preview-grid" id="preview-grid"></div>
+
+      <div class="field">
+        <label>Mensagem para os agentes (opcional)</label>
+        <textarea id="obs" placeholder="Disponibilidade, objetivos, projetos..."></textarea>
+      </div>
+
+      <div style="margin-top:8px; border-top:1px solid #f0f0f0; padding-top:16px; margin-bottom:4px">
+        <div style="font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Resumo</div>
+        <div class="summary-list" id="summary-list"></div>
+      </div>
+
+      <div class="terms-row" id="termos" onclick="toggleTerms()">
+        <input type="checkbox" id="termos-cb">
+        <div class="chk" id="chk-icon">✓</div>
+        <div class="terms-text">
+          Autorizo a <strong>Lolla Labs</strong> a utilizar meu book para fins de casting e análise pelos agentes.
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn-back" onclick="goTo(2)">← Voltar</button>
+        <button class="btn-next" id="submit-btn" onclick="submitForm()">Enviar ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="success" id="success">
+    <div class="card">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Book enviado!</div>
+      <div class="success-sub">
+        Recebemos sua ficha com sucesso.<br>
+        Nossos agentes retornam em até <strong>5 dias úteis</strong>.
+      </div>
+      <div class="protocol" id="protocol">—</div>
+      <br>
+      <button class="btn-next" onclick="resetForm()">Enviar outro book</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="footer">© Lolla Labs · Casting Digital</footer>
+
+<script>
+let files = [];
+let termsOk = false;
+
+/* Toast */
+function toast(msg, ms = 3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), ms);
+}
+
+/* Steps */
+function goTo(n) {
+  if (n === 3) buildSummary();
+
+  for (let i = 1; i <= 3; i++) {
+    const s = document.getElementById('step-' + i);
+    const l = document.getElementById('line-' + i);
+    s.classList.remove('active', 'done');
+    if (i < n) s.classList.add('done');
+    if (i === n) s.classList.add('active');
+    if (l) l.classList.toggle('done', i < n);
+  }
+
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Terms */
+function toggleTerms() {
+  termsOk = !termsOk;
+  document.getElementById('termos').classList.toggle('checked', termsOk);
+  document.getElementById('termos-cb').checked = termsOk;
+}
+
+/* Upload */
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('over');
+  handleFiles(e.dataTransfer.files);
+});
+
+function handleFiles(incoming) {
+  const valid = Array.from(incoming).filter(f => f.type.startsWith('image/') && f.size <= 10 * 1024 * 1024);
+  if (Array.from(incoming).length > valid.length) toast('Arquivo(s) inválido(s) ignorado(s)');
+  files = [...files, ...valid].slice(0, 10);
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const grid    = document.getElementById('preview-grid');
+  const counter = document.getElementById('file-count');
+  grid.innerHTML = '';
+  counter.style.display = files.length ? 'block' : 'none';
+  if (files.length) counter.textContent = `${files.length} foto${files.length > 1 ? 's' : ''} selecionada${files.length > 1 ? 's' : ''}`;
+  files.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    const url = URL.createObjectURL(f);
+    item.innerHTML = `<img src="${url}"><button class="preview-remove" onclick="removeFile(${i})">✕</button>`;
+    grid.appendChild(item);
+  });
+}
+
+function removeFile(i) { files.splice(i, 1); renderPreviews(); }
+
+/* Get field value */
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+/* Summary */
+function buildSummary() {
+  const medidas = [v('busto'), v('cintura'), v('quadril')].filter(Boolean).join(' / ');
+  const rows = [
+    ['Nome',     v('nome')     || '—'],
+    ['E-mail',   v('email')    || '—'],
+    ['WhatsApp', v('telefone') || '—'],
+    ['Cidade',   v('cidade')   || '—'],
+    ['Altura',   v('altura')   ? v('altura') + ' cm' : '—'],
+    ['Medidas',  medidas       || '—'],
+    ['Manequim', v('manequim') || '—'],
+  ];
+
+  document.getElementById('summary-list').innerHTML = rows.map(([k, val]) =>
+    `<div class="summary-row"><span class="key">${k}</span><span class="val">${val}</span></div>`
+  ).join('');
+}
+
+/* Submit */
+  async function submitForm() {
+    if (!termsOk) { toast('Aceite os termos para continuar.'); return; }
+    if (!v('nome') || !v('email') || !v('telefone')) {
+      toast('Preencha nome, e-mail e WhatsApp.'); return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      let photoURLs = [];
+
+      /* 📸 Upload das imagens */
+      if (files.length) {
+        toast('Enviando fotos...', 10000);
+
+        for (const file of files) {
+          const fileName = `${Date.now()}-${file.name}`;
+
+          const { error: uploadError } = await supabaseClient.storage
+            .from('books')
+            .upload(fileName, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data } = supabaseClient.storage
+            .from('books')
+            .getPublicUrl(fileName);
+
+          photoURLs.push(data.publicUrl);
+        }
+      }
+
+      /* 💾 Salvar no banco */
+      const { data, error } = await supabaseClient
+        .from('castings')
+        .insert([
+          {
+            nome: v('nome'),
+            email: v('email'),
+            telefone: v('telefone'),
+            cidade: v('cidade'),
+            nascimento: v('nascimento'),
+            instagram: v('instagram'),
+            altura: v('altura'),
+            busto: v('busto'),
+            cintura: v('cintura'),
+            quadril: v('quadril'),
+            manequim: v('manequim'),
+            observacoes: v('obs'),
+            foto_urls: JSON.stringify(photoURLs),
+            total_fotos: files.length,
+            status: 'pendente'
+          }
+        ])
+        .select();
+
+      if (error) throw error;
+
+      const id = data[0]?.id || Math.random().toString(36).slice(2);
+
+      document.getElementById('protocol').textContent = 'Protocolo: ' + id;
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('steps-bar').style.display = 'none';
+
+      const notice = document.getElementById('notice');
+      if (notice) notice.style.display = 'none';
+
+      document.getElementById('success').classList.add('show');
+
+    } catch (err) {
+      console.error(err);
+      toast('Erro ao enviar. Verifique o Supabase.', 5000);
+      btn.disabled = false;
+      btn.textContent = 'Enviar ✓';
+    }
+  }
+  
+</script>
+<script>
+  function resetForm() {
+    // limpar inputs
+    document.querySelectorAll('input, textarea').forEach(el => {
+      if (el.type === 'checkbox') {
+        el.checked = false;
+      } else {
+        el.value = '';
+      }
+    });
+
+    // resetar variáveis
+    files = [];
+    termsOk = false;
+
+    // limpar previews
+    document.getElementById('preview-grid').innerHTML = '';
+    document.getElementById('file-count').style.display = 'none';
+
+    // resetar termos visuais
+    document.getElementById('termos').classList.remove('checked');
+
+    // voltar para etapa 1
+    document.getElementById('success').classList.remove('show');
+    document.getElementById('steps-bar').style.display = 'flex';
+
+    goTo(1);
+  }
+</script>
+</body>
+</html>
