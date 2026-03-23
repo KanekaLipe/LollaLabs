@@ -2,7 +2,7 @@ const CACHE_NAME = "LollaLabs";
 
 const urlsToCache = [
     "./",
-    "./MODA.html",
+    "./index.html",
     "./manifest.json"
 ];
 
